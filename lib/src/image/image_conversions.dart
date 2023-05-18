@@ -57,13 +57,12 @@ class ImageConversions {
   static void convertImageToTensorBuffer(Image image, TensorBuffer buffer) {
     int w = image.width;
     int h = image.height;
-    List<int> intValues = image.data!.buffer.asUint32List();
     int flatSize = w * h * 3;
     List<int> shape = [h, w, 3];
     switch (buffer.getDataType()) {
       case TfLiteType.uint8:
         List<int> byteArr = List.filled(flatSize, 0);
-        for (int i = 0, j = 0; i < intValues.length; i++) {
+        for (int i = 0, j = 0; i < w * h; i++) {
           final pixel = image.getPixel(i % w, i ~/ w);
           byteArr[j++] = pixel.r.toInt();
           byteArr[j++] = pixel.g.toInt();
@@ -73,7 +72,7 @@ class ImageConversions {
         break;
       case TfLiteType.float32:
         List<double> floatArr = List.filled(flatSize, 0.0);
-        for (int i = 0, j = 0; i < intValues.length; i++) {
+        for (int i = 0, j = 0; i < w * h; i++) {
           final pixel = image.getPixel(i % w, i ~/ w);
           floatArr[j++] = pixel.r.toDouble();
           floatArr[j++] = pixel.g.toDouble();
