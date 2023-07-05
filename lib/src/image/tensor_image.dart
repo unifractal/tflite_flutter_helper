@@ -29,13 +29,13 @@ import 'package:tflite_flutter_helper/src/tensorbuffer/tensorbuffer.dart';
 /// See [ImageProcessor] which is often used for transforming a [TensorImage].
 class TensorImage {
   BaseImageContainer? _container;
-  final TfLiteType _tfLiteType;
+  final TensorType _TensorType;
 
   /// Initialize a [TensorImage] object.
   ///
-  /// Note: For Image with float value pixels use [TensorImage(TfLiteType.float)]
-  TensorImage([TfLiteType dataType = TfLiteType.uint8])
-      : _tfLiteType = dataType;
+  /// Note: For Image with float value pixels use [TensorImage(TensorType.float)]
+  TensorImage([TensorType dataType = TensorType.uint8])
+      : _TensorType = dataType;
 
   /// Initialize [TensorImage] from [Image]
   ///
@@ -74,7 +74,7 @@ class TensorImage {
   /// and [shape] is not in form (height, width ,channels) or
   /// (1, height, width, channels)
   void loadRgbPixels(List pixels, List<int> shape) {
-    TensorBuffer buffer = TensorBuffer.createDynamic(dataType);
+    TensorBuffer buffer = TensorBuffer.createDynamic(_TensorType);
     buffer.loadList(pixels, shape: shape);
     loadTensorBuffer(buffer);
   }
@@ -131,25 +131,6 @@ class TensorImage {
   /// and [ArgumentError] if the container data is corrupted.
   int getWidth() => width;
 
-  /// Gets the current data type.
-  ///
-  /// Currently only UINT8 and FLOAT32 are possible.
-  TfLiteType get dataType {
-    return _tfLiteType;
-  }
-
-  /// Gets the current data type.
-  ///
-  /// Currently only UINT8 and FLOAT32 are possible.
-  TfLiteType getDataType() => dataType;
-
-  /// Gets the current data type.
-  ///
-  /// Currently only UINT8 and FLOAT32 are possible.
-  TfLiteType get tfLiteType {
-    return _tfLiteType;
-  }
-
   /// Returns the underlying [Image] representation of this [TensorImage].
   ///
   /// Important: It's only a reference. DO NOT MODIFY. We don't create a copy here for performance
@@ -171,7 +152,7 @@ class TensorImage {
   /// It's essentially a short cut for [getTensorBuffer.getBuffer()].
   ///
   /// Throws [StateError] if the TensorImage never loads data.
-  ByteBuffer get buffer {    
+  ByteBuffer get buffer {
     return tensorBuffer.buffer;
   }
 
@@ -195,7 +176,7 @@ class TensorImage {
     if (_container == null) {
       throw new StateError("No image has been loaded yet.");
     }
-    return _container!.getTensorBuffer(_tfLiteType);
+    return _container!.getTensorBuffer(_TensorType);
   }
 
   /// Returns the underlying [TensorBuffer] representation for this [TensorImage]
